@@ -25,7 +25,7 @@ package object MySQLTranslation {
     
     def toMySQL(f : Field[_]) : String = {
         f match {
-            case f : FieldValue[_] => f.value.toString()
+            case f : FieldValue[_] => "\"" + f.value.toString() + "\""
             case f : FieldName[_] => f.name
         }
     }

@@ -5,6 +5,10 @@ package object scalaSQL {
         
     class Field[T <% Comparable[T]]
     
+    object Field {
+        def apply[T <% Comparable[T]](x : String) = new FieldName[T](x)
+    }
+    
     class FieldName[T <% Comparable[T]](val name : String) extends Field[T] {
         def == (that : Field[T]) = ETComparison(this, that)
         def != (that : Field[T]) = NotCondition (this == that)

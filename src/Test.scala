@@ -4,26 +4,20 @@ import scalaSQL.MySQLTranslation._
 
 
 object Test extends App {
+    
+    val students = SQLSet[Student]("students")
+    
+    val first_ten = students.filter(_.age > 20)
 
-//    val t1 = new SQLTuple();
-//            
-//    val intField : Field[String] = "his"
-//    
-    val student = new Student()
-    
-    val students = SQLSet[Student]("students", student.attributes)
-    
-    val first_ten = students.filter(student.id > 10)
-    
     println (toMySQL(first_ten.getQuery))
 }
 
 class Student() extends SQLTuple {
-    val id = new FieldName[Int]("id")
-    val name = new FieldName[String]("name")
-    val age = new FieldName[Int]("age")
+    val id = Field[Int]("id")
+    val name = Field[String]("name")
+    val age = Field[Int]("age")
 
-    val attributes = List(id, name, age)
+    override def attributes = List(id, name, age)
 }
 
 
