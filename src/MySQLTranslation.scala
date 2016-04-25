@@ -1,6 +1,6 @@
-package scalaSQL
+package scalasql
 
-package object MySQLTranslation {
+package object mysql {
     def toMySQL(q: Query) : String = {
         val attribute_names = q.attributes.map { x => x.name }
         val select = "SELECT " + (attribute_names mkString ",")

@@ -1,15 +1,14 @@
 
-package object scalaSQL {
-
+package object scalasql {
+    import scala.reflect.runtime.universe._
     
-        
-    class Field[T <% Comparable[T]]
+    abstract class Field[T <% Comparable[T]]
     
     object Field {
-        def apply[T <% Comparable[T]](x : String) = new FieldName[T](x)
+        def apply[T <% Comparable[T]: TypeTag](x : String) = new FieldName[T](x, typeOf[T])
     }
     
-    class FieldName[T <% Comparable[T]](val name : String) extends Field[T] {
+    case class FieldName[T <% Comparable[T]](name: String, t: Type) extends Field[T] {
         def == (that : Field[T]) = ETComparison(this, that)
         def != (that : Field[T]) = NotCondition (this == that)
         def >  (that : Field[T]) = GTComparison(this, that)
@@ -18,12 +17,12 @@ package object scalaSQL {
         def <= (that : Field[T]) = OrCondition(this < that, this == that)
     }
 
-    class FieldValue[T <% Comparable[T]](val value : Any) extends Field[T]
-    implicit def fromInt(i : Int) = new FieldValue[Int](i)
-    implicit def fromString(s : String) = new FieldValue[String](s)
+    case class FieldValue[T <% Comparable[T]](value : Any, t: Type) extends Field[T]
+    implicit def fromInt(i : Int) = new FieldValue[Int](i, typeOf[Int])
+    implicit def fromString(s : String) = new FieldValue[String](s, typeOf[String])
     
     abstract class Operation
-    case class Relation(val name : String, val attributes : List[FieldName[_]]) extends Operation
+    case class Relation(val name : String, val fields : List[FieldName[_]]) extends Operation
 
 
     abstract class Condition
@@ -59,7 +58,7 @@ package object scalaSQL {
         case _ => throw new Exception("Operation not recognized")
     }
     
-    def relationToQuery(r : Relation) : Query = Query(r.attributes, r.name, None)
+    def relationToQuery(r : Relation) : Query = Query(r.fields, r.name, None)
     
     def projectionToQuery(p : Projection) : Query = {
         val original : Query = toQuery(p.op)
