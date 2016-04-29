@@ -8,7 +8,7 @@ package object scalasql {
         def apply[T <% Comparable[T]: TypeTag](x : String) = new FieldName[T](x, typeOf[T])
     }
     
-    case class FieldName[T <% Comparable[T]](name: String, t: Type) extends Field[T] {
+    case class FieldName[T <% Comparable[T]](n: String, t: Type) extends Field[T] {
         def == (that : Field[T]) = ETComparison(this, that)
         def != (that : Field[T]) = NotCondition (this == that)
         def >  (that : Field[T]) = GTComparison(this, that)
@@ -17,7 +17,8 @@ package object scalasql {
         def <= (that : Field[T]) = OrCondition(this < that, this == that)
     }
 
-    case class FieldValue[T <% Comparable[T]](value : Any, t: Type) extends Field[T]
+    
+    case class FieldValue[T <% Comparable[T]](value: T, t: Type) extends Field[T]
     implicit def fromInt(i : Int) = new FieldValue[Int](i, typeOf[Int])
     implicit def fromString(s : String) = new FieldValue[String](s, typeOf[String])
     
